@@ -78,27 +78,24 @@ Game::Game() : window(sf::VideoMode(800, 600), "SFML Game")
   initEnemies();
 }
 
-void Game::update(float delta_time)
+void Game::update(float deltaTime)
 {
-  play.update(delta_time);
+  play.update(deltaTime);
+  grunt.update(deltaTime);
 
   for (size_t i = 0; i < badGuys.size(); i++)
   {
-    badGuys[i].update(delta_time);
+    badGuys[i].update(deltaTime);
   }
 
-  if (play.projs.size() > 0)
+  for (size_t i = 0; i < play.projs.size(); i++)
   {
-    for (size_t i = 0; i < play.projs.size(); i++)
+    for (size_t j = 0; j < badGuys.size(); j++)
     {
-      for (size_t j = 0; j < badGuys.size(); j++)
+      if (isColliding(badGuys[j], play.projs[i]))
       {
-        if (isColliding(badGuys[j], play.projs[i]))
-        {
-          play.projs.erase(play.projs.begin() + i);
-          badGuys.erase(badGuys.begin() + j); 
-          //enemies.erase(enemies.begin() + j);
-        }
+        play.projs.erase(play.projs.begin() + i);
+        badGuys.erase(badGuys.begin() + j);
       }
     }
   }
@@ -121,33 +118,24 @@ void Game::draw(sf::RenderWindow &window)
   {
     badGuys[i].draw(window);
   }
+  
 
   window.display();
 }
 
 void Game::initEnemies()
 {
-  // RectangleShape e1;
-  // e1.setFillColor(sf::Color::Green);
-  // e1.setSize(sf::Vector2f(20, 20));
-  // e1.setPosition(sf::Vector2f(200, 200));
-  // enemies.push_back(RectangleShape(e1));
 
-  // RectangleShape e2;
-  // e2.setFillColor(sf::Color::Magenta);
-  // e2.setSize(sf::Vector2f(20, 20));
-  // e2.setPosition(sf::Vector2f(250, 250));
-  // enemies.push_back(RectangleShape(e2));
-
-  Enemy bg1(sf::Color::Black, sf::Vector2f(300, 300), sf::Vector2f(30, 30));
+  Grunt bg1;
   badGuys.push_back(bg1);
 
-  Enemy bg2(sf::Color::Blue, sf::Vector2f(350, 350), sf::Vector2f(20, 20));
-  badGuys.push_back(bg2);
+  // Enemy bg2(sf::Color::Blue, sf::Vector2f(350, 350), sf::Vector2f(20, 20));
+  // badGuys.push_back(bg2);
 }
 
 bool Game::isColliding(Enemy &enemy, CircleShape &projectile)
 {
+  
   return projectile.getGlobalBounds().intersects(enemy.GetCollisionBox());
 }
 
